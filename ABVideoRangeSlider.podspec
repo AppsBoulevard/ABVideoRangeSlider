@@ -28,11 +28,11 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '8.0'
 
-  s.source_files = 'ABVideoRangeSlider/Classes/**/*'
+  s.source_files = 'ABVideoRangeSlider/Classes/**/*', 'ABVideoRangeSlider/Assets/*'
   
-   s.resource_bundles = {
-     'ABVideoRangeSlider' => ['ABVideoRangeSlider/Assets/*.png']
-   }
+  s.resource_bundles = {
+    'ABVideoRangeSlider' => ['ABVideoRangeSlider/Assets/*.png']
+  }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
