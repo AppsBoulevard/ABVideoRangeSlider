@@ -5,6 +5,8 @@
 [![License](https://img.shields.io/cocoapods/l/ABVideoRangeSlider.svg?style=flat)](http://cocoapods.org/pods/ABVideoRangeSlider)
 [![Platform](https://img.shields.io/cocoapods/p/ABVideoRangeSlider.svg?style=flat)](http://cocoapods.org/pods/ABVideoRangeSlider)
 
+Customizable Video Range Slider for trimming videos written in Swift 3.
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.

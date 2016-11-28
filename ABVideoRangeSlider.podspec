@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'ABVideoRangeSlider'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of ABVideoRangeSlider.'
+  s.summary          = 'A simple range slider for trimming videos written in Swift 3.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -17,24 +17,24 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
-  s.description      = <<-DESC
+  s.description      = 'Display thumbnails and a slider for trimming videos in iOS.'
 TODO: Add long description of the pod here.
                        DESC
 
-  s.homepage         = 'https://github.com/<GITHUB_USERNAME>/ABVideoRangeSlider'
+  s.homepage         = 'https://github.com/AppsBoulevard/ABVideoRangeSlider'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Oscar J. Irun' => 'oscarjiv91@gmail.com' }
-  s.source           = { :git => 'https://github.com/<GITHUB_USERNAME>/ABVideoRangeSlider.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.source           = { :git => 'https://github.com/AppsBoulevard/ABVideoRangeSlider.git', :tag => s.version.to_s }
+s.social_media_url = 'https://twitter.com/AppsBoulevard'
 
   s.ios.deployment_target = '8.0'
 
   s.source_files = 'ABVideoRangeSlider/Classes/**/*'
   
-  # s.resource_bundles = {
-  #   'ABVideoRangeSlider' => ['ABVideoRangeSlider/Assets/*.png']
-  # }
+   s.resource_bundles = {
+     'ABVideoRangeSlider' => ['ABVideoRangeSlider/Assets/*.png']
+   }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
