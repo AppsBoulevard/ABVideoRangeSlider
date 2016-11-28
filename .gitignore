@@ -34,3 +34,4 @@ Pods/
 Example/Pods
 Example/Podfile.lock
 .travis.yml
+Example/*.xcworkspace
