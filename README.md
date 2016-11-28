@@ -75,9 +75,9 @@ videoRangeSlider.updateThumbnails()
 ## Author
 [Apps Boulevard](http://www.appsboulevard.com)
 
-Twitter: twitter.com/AppsBoulevard
-Facebook: facebook.com/AppsBoulevard
-Email: hello@appsboulevard.com
+* Twitter: [@AppsBoulevard](twitter.com/AppsBoulevard)
+* Facebook: [facebook.com/AppsBoulevard](facebook.com/AppsBoulevard)
+* Email: hello@appsboulevard.com
 ## License
 
 ABVideoRangeSlider is available under the MIT license. See the LICENSE file for more info.
