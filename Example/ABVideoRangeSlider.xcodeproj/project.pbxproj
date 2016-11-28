@@ -43,10 +43,7 @@
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		6AA7B8FC97BA2D0E80D18B94 /* Pods-ABVideoRangeSlider_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ABVideoRangeSlider_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ABVideoRangeSlider_Example/Pods-ABVideoRangeSlider_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		7B920A6795E41DF7C8DA0817 /* Pods_ABVideoRangeSlider_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ABVideoRangeSlider_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8687E5D92A0E034F2420D2CF /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		87B4A39AB7799AEC64D57759 /* ABVideoRangeSlider.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ABVideoRangeSlider.podspec; path = ../ABVideoRangeSlider.podspec; sourceTree = "<group>"; };
 		B211C6C894191DBDEC99740D /* Pods-ABVideoRangeSlider_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ABVideoRangeSlider_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ABVideoRangeSlider_Tests/Pods-ABVideoRangeSlider_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		B68CD6609E375BF78E57C9AF /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		D42806DB468F56C07D2DB846 /* Pods-ABVideoRangeSlider_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ABVideoRangeSlider_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ABVideoRangeSlider_Tests/Pods-ABVideoRangeSlider_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		E191EE3CC9E8E40FA271053D /* Pods_ABVideoRangeSlider_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ABVideoRangeSlider_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -85,7 +82,6 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
-				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for ABVideoRangeSlider */,
 				607FACE81AFB9204008FA782 /* Tests */,
 				607FACD11AFB9204008FA782 /* Products */,
@@ -141,16 +137,6 @@
 				607FACEA1AFB9204008FA782 /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		607FACF51AFB993E008FA782 /* Podspec Metadata */ = {
-			isa = PBXGroup;
-			children = (
-				87B4A39AB7799AEC64D57759 /* ABVideoRangeSlider.podspec */,
-				8687E5D92A0E034F2420D2CF /* README.md */,
-				B68CD6609E375BF78E57C9AF /* LICENSE */,
-			);
-			name = "Podspec Metadata";
 			sourceTree = "<group>";
 		};
 		8925BF152B4BF08AB1A54A4D /* Frameworks */ = {
