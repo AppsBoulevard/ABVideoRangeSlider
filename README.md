@@ -9,8 +9,6 @@ Customizable Video Range Slider for trimming videos written in Swift 3.
 
 ![Portrait](https://raw.githubusercontent.com/AppsBoulevard/ABVideoRangeSlider/master/Screenshots/Portrait.png "Portrait")
 
-![Landscape](https://raw.githubusercontent.com/AppsBoulevard/ABVideoRangeSlider/master/Screenshots/Landscape.png "Landscape")
-
 ![Custom Indicators](https://raw.githubusercontent.com/AppsBoulevard/ABVideoRangeSlider/master/Screenshots/CustomIndicators.png "Custom Indicators")
 
 ## Installation
