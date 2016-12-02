@@ -79,20 +79,6 @@ public class ABVideoRangeSlider: UIView {
         endIndicator.addGestureRecognizer(endDrag)
         self.addSubview(endIndicator)
 
-        
-        // Setup Progress Indicator
-        
-        let progressDrag = UIPanGestureRecognizer(target:self,
-                                             action: #selector(progressDragged(recognizer:)))
-        
-        progressIndicator = ABProgressIndicator(frame: CGRect(x: 0,
-                                                              y: -topBorderHeight,
-                                                              width: 20,
-                                                              height: self.frame.size.height + bottomBorderHeight + topBorderHeight))
-//        progressIndicator.isHidden = true
-        progressIndicator.addGestureRecognizer(progressDrag)
-        progressIndicator.backgroundColor = .red
-        self.addSubview(progressIndicator)
 
         // Setup Top and bottom line
         
@@ -112,6 +98,19 @@ public class ABVideoRangeSlider: UIView {
                          forKeyPath: "bounds",
                          options: NSKeyValueObservingOptions(rawValue: 0),
                          context: nil)
+        
+        // Setup Progress Indicator
+        
+        let progressDrag = UIPanGestureRecognizer(target:self,
+                                                  action: #selector(progressDragged(recognizer:)))
+        
+        progressIndicator = ABProgressIndicator(frame: CGRect(x: 0,
+                                                              y: -topBorderHeight,
+                                                              width: 10,
+                                                              height: self.frame.size.height + bottomBorderHeight + topBorderHeight))
+//        progressIndicator.isHidden = true
+        progressIndicator.addGestureRecognizer(progressDrag)
+        self.addSubview(progressIndicator)
     }
 
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -121,6 +120,23 @@ public class ABVideoRangeSlider: UIView {
     }
     
     // MARK: Public functions
+    
+    public func setProgressIndicatorImage(image: UIImage){
+        self.progressIndicator.imageView.image = image
+    }
+    
+    public func hideProgressIndicator(){
+        self.progressIndicator.isHidden = true
+    }
+    
+    public func showProgressIndicator(){
+        self.progressIndicator.isHidden = false
+    }
+    
+    public func updateProgressIndicator(seconds: Float64){
+        self.progressPercentage = self.valueFromSeconds(seconds: Float(seconds))
+        layoutSubviews()
+    }
     
     public func setStartIndicatorImage(image: UIImage){
         self.startIndicator.imageView.image = image
@@ -251,8 +267,6 @@ public class ABVideoRangeSlider: UIView {
         
         var position = positionFromValue(value: self.progressPercentage)
         position = position + translation.x
-        
-        print(position)
         
         if position < positionLimitStart{
             position = positionLimitStart
