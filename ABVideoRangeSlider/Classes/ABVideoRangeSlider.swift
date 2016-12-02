@@ -10,21 +10,24 @@ import UIKit
 
 public protocol ABVideoRangeSliderDelegate {
     func didChangeValue(videoRangeSlider: ABVideoRangeSlider, startTime: Float64, endTime: Float64)
+    func indicatorDidChangePosition(videoRangeSlider: ABVideoRangeSlider, position: Float64)
 }
 
 public class ABVideoRangeSlider: UIView {
     
     public var delegate: ABVideoRangeSliderDelegate? = nil
     
-    var startIndicator  = ABStartIndicator()
-    var endIndicator    = ABEndIndicator()
-    var topLine         = ABBorder()
-    var bottomLine      = ABBorder()
+    var startIndicator      = ABStartIndicator()
+    var endIndicator        = ABEndIndicator()
+    var topLine             = ABBorder()
+    var bottomLine          = ABBorder()
+    var progressIndicator   = ABProgressIndicator()
     
     let thumbnailsManager   = ABThumbnailsManager()
     var duration: Float64   = 0.0
     var videoURL            = URL(fileURLWithPath: "")
     
+    var progressPercentage: CGFloat = 0         // Represented in percentage
     var startPercentage: CGFloat    = 0         // Represented in percentage
     var endPercentage: CGFloat      = 100       // Represented in percentage
     
@@ -75,7 +78,22 @@ public class ABVideoRangeSlider: UIView {
                                                     height: self.frame.size.height + bottomBorderHeight + topBorderHeight))
         endIndicator.addGestureRecognizer(endDrag)
         self.addSubview(endIndicator)
+
         
+        // Setup Progress Indicator
+        
+        let progressDrag = UIPanGestureRecognizer(target:self,
+                                             action: #selector(progressDragged(recognizer:)))
+        
+        progressIndicator = ABProgressIndicator(frame: CGRect(x: 0,
+                                                              y: -topBorderHeight,
+                                                              width: 20,
+                                                              height: self.frame.size.height + bottomBorderHeight + topBorderHeight))
+//        progressIndicator.isHidden = true
+        progressIndicator.addGestureRecognizer(progressDrag)
+        progressIndicator.backgroundColor = .red
+        self.addSubview(progressIndicator)
+
         // Setup Top and bottom line
         
         topLine = ABBorder(frame: CGRect(x: 0,
@@ -225,6 +243,40 @@ public class ABVideoRangeSlider: UIView {
         layoutSubviews()
     }
     
+    func progressDragged(recognizer: UIPanGestureRecognizer){
+        let translation = recognizer.translation(in: self)
+        
+        let positionLimitStart  = positionFromValue(value: self.startPercentage)
+        let positionLimitEnd    = positionFromValue(value: self.endPercentage)
+        
+        var position = positionFromValue(value: self.progressPercentage)
+        position = position + translation.x
+        
+        print(position)
+        
+        if position < positionLimitStart{
+            position = positionLimitStart
+        }
+        
+        if position > positionLimitEnd{
+            position = positionLimitEnd
+        }
+        
+        recognizer.setTranslation(CGPoint.zero, in: self)
+        
+        progressIndicator.center = CGPoint(x: position , y: progressIndicator.center.y)
+        
+        let percentage = progressIndicator.center.x * 100 / self.frame.width
+        
+        let progressSeconds = secondsFromValue(value: progressPercentage)
+        
+        self.delegate?.indicatorDidChangePosition(videoRangeSlider: self, position: progressSeconds)
+        
+        self.progressPercentage = percentage
+        
+        layoutSubviews()
+    }
+    
     private func secondsFromValue(value: CGFloat) -> Float64{
         return duration * Float64((value / 100))
     }
@@ -240,9 +292,11 @@ public class ABVideoRangeSlider: UIView {
 
         let startPosition = positionFromValue(value: self.startPercentage)
         let endPosition = positionFromValue(value: self.endPercentage)
+        let progressPosition = positionFromValue(value: self.progressPercentage)
         
         startIndicator.center = CGPoint(x: startPosition, y: startIndicator.center.y)
         endIndicator.center = CGPoint(x: endPosition, y: endIndicator.center.y)
+        progressIndicator.center = CGPoint(x: progressPosition, y: progressIndicator.center.y)
 
         
         topLine.frame = CGRect(x: startIndicator.frame.origin.x + startIndicator.frame.width,
@@ -254,6 +308,7 @@ public class ABVideoRangeSlider: UIView {
                                   y: self.frame.size.height,
                                   width: endIndicator.frame.origin.x - startIndicator.frame.origin.x - endIndicator.frame.size.width,
                                   height: bottomBorderHeight)
+        
     }
 
     
