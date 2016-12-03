@@ -23,7 +23,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xXz-O0-35H" customClass="ABVideoRangeSlider" customModule="ABVideoRangeSlider">
-                                <rect key="frame" x="16" y="153" width="343" height="40"/>
+                                <rect key="frame" x="24" y="153" width="327" height="40"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="FgH-4C-ZDG"/>
@@ -87,8 +87,8 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="c3F-DQ-vEz" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="0GJ-Ao-hh6"/>
-                            <constraint firstItem="xXz-O0-35H" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="16" id="18c-v3-enh"/>
-                            <constraint firstAttribute="trailing" secondItem="xXz-O0-35H" secondAttribute="trailing" constant="16" id="54G-w6-10V"/>
+                            <constraint firstItem="xXz-O0-35H" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="24" id="18c-v3-enh"/>
+                            <constraint firstAttribute="trailing" secondItem="xXz-O0-35H" secondAttribute="trailing" constant="24" id="54G-w6-10V"/>
                             <constraint firstAttribute="trailing" secondItem="xOY-0j-fae" secondAttribute="trailing" constant="16" id="IbF-F6-M5q"/>
                             <constraint firstItem="adA-VI-bql" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="16" id="Kui-E5-G8D"/>
                             <constraint firstItem="guw-eu-ThB" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="16" id="LaK-Xp-Kjx"/>

@@ -53,8 +53,10 @@ class ViewController: UIViewController, ABVideoRangeSliderDelegate {
         
         let customBorder =  UIImage(named: "CustomBorder")
         videoRangeSlider.setBorderImage(image: customBorder!)
+         
+        let customProgressIndicator =  UIImage(named: "CustomProgress")
+        videoRangeSlider.setProgressIndicatorImage(image: customProgressIndicator!)
 */
-        
     }
     
     // MARK: ABVideoRangeSlider Delegate - Returns time in seconds
