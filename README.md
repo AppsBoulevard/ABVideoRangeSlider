@@ -46,12 +46,32 @@ videoRangeSlider.delegate = self
 videoRangeSlider.minSpace = 60.0
 ```
 
-## Delegate
+## Progress indicator
+
+You can show/hide this indicator using the following methods
+
+```Swift
+    videoRangeSlider.hideProgressIndicator()
+    videoRangeSlider.showProgressIndicator()
+```
+If you want to update the position:
+
+```Swift
+    videoRangeSlider.updateProgressIndicator(seconds: elapsedTimeOfVideo)
+```
+
+## Protocols
 
 ```Swift
 func didChangeValue(videoRangeSlider: ABVideoRangeSlider, startTime: Float64, endTime: Float64) {
     print(startTime)    // Prints the position of the Start indicator in seconds
     print(endTime)      // Prints the position of the End indicator in seconds
+}
+```
+
+```Swift
+func indicatorDidChangePosition(videoRangeSlider: ABVideoRangeSlider, position: Float64) {
+    print(position)      // Prints the position of the Progress indicator in seconds
 }
 ```
 
@@ -69,6 +89,10 @@ func didChangeValue(videoRangeSlider: ABVideoRangeSlider, startTime: Float64, en
         // Customize bottom and top border with a custom image
         let customBorder =  UIImage(named: "CustomBorder")
         videoRangeSlider.setBorderImage(image: customBorder!)
+
+        // Customize Progress indicator with a custom image
+        let customProgressIndicator =  UIImage(named: "CustomProgressIndicator")
+        videoRangeSlider.setProgressIndicatorImage(image: customProgressIndicator!)
 ```
 
 ## Public method
