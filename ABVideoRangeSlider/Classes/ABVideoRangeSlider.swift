@@ -177,6 +177,17 @@ public class ABVideoRangeSlider: UIView {
         }
     }
     
+    public func setStartPosition(seconds: Float){
+        self.startPercentage = self.valueFromSeconds(seconds: seconds)
+        self.progressPercentage = self.valueFromSeconds(seconds: seconds)
+        layoutSubviews()
+    }
+    
+    public func setEndPosition(seconds: Float){
+        self.endPercentage = self.valueFromSeconds(seconds: seconds)
+        layoutSubviews()
+    }
+    
     // MARK: Private functions
     
     private func positionFromValue(value: CGFloat) -> CGFloat{

@@ -48,6 +48,14 @@ videoRangeSlider.delegate = self
 videoRangeSlider.minSpace = 60.0
 ```
 
+``` Swift
+// Set initial position of Start Indicator
+videoRangeSlider.setStartPosition(seconds: 50.0)
+
+// Set initial position of End Indicator
+videoRangeSlider.setEndPosition(seconds: 150.0)
+```
+
 ## Progress indicator
 
 You can show/hide this indicator using the following methods

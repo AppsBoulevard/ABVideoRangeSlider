@@ -41,6 +41,12 @@ class ViewController: UIViewController, ABVideoRangeSliderDelegate {
 
         lblMinSpace.text = "\(videoRangeSlider.minSpace)"
         
+        // Set initial position of Start Indicator
+        videoRangeSlider.setStartPosition(seconds: 50.0)
+        
+        // Set initial position of End Indicator
+        videoRangeSlider.setEndPosition(seconds: 150.0)
+        
         /* Uncomment to customize the Video Range Slider */
 /*
         let customStartIndicator =  UIImage(named: "CustomStartIndicator")

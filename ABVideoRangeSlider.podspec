@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ABVideoRangeSlider'
-  s.version          = '0.1.0'
-  s.summary          = 'A simple range slider for trimming videos written in Swift 3.'
+  s.version          = '0.1.2'
+  s.summary          = 'A simple range slider for trimming videos written in Swift 3. Includes a Progress Indicator.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
-  s.description      = 'Display thumbnails and a slider for trimming videos in iOS.'
+  s.description      = 'Display thumbnails and a slider for trimming videos in iOS. Includes a Progress Indicator'
 
   s.homepage         = 'https://github.com/AppsBoulevard/ABVideoRangeSlider'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '8.0'
 
   s.source_files = 'ABVideoRangeSlider/Classes/**/*', 'ABVideoRangeSlider/Assets/*'
-  
+
   s.resource_bundles = {
     'ABVideoRangeSlider' => ['ABVideoRangeSlider/Assets/*.png']
   }
