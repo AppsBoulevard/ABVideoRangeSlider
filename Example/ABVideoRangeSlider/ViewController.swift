@@ -38,6 +38,7 @@ class ViewController: UIViewController, ABVideoRangeSliderDelegate {
         videoRangeSlider.setVideoURL(videoURL: URL(fileURLWithPath: path!))
         videoRangeSlider.delegate = self
         videoRangeSlider.minSpace = 60.0
+//        videoRangeSlider.maxSpace = 180.0
 
         lblMinSpace.text = "\(videoRangeSlider.minSpace)"
         

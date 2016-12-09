@@ -46,6 +46,9 @@ videoRangeSlider.delegate = self
 
 // Set a minimun space (in seconds) between the Start indicator and End indicator
 videoRangeSlider.minSpace = 60.0
+
+// Set a maximun space (in seconds) between the Start indicator and End indicator - Default is 0 (no max limit)
+videoRangeSlider.maxSpace = 120.0
 ```
 
 ``` Swift

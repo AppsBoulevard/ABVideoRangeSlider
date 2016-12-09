@@ -37,6 +37,7 @@ public class ABVideoRangeSlider: UIView {
     let indicatorWidth: CGFloat = 20.0
     
     public var minSpace: Float = 1              // In Seconds
+    public var maxSpace: Float = 0              // In Seconds
     
     var isUpdatingThumbnails = false
     
@@ -224,6 +225,13 @@ public class ABVideoRangeSlider: UIView {
             }
         }
         
+        let positionLimitMax = positionFromValue(value: self.endPercentage - valueFromSeconds(seconds: maxSpace))
+        if Float(self.duration) > self.maxSpace && self.maxSpace > 0{
+            if position < positionLimitMax{
+                position = positionLimitMax
+            }
+        }
+        
         
         recognizer.setTranslation(CGPoint.zero, in: self)
         progressIndicator.center = CGPoint(x: progressPosition , y: progressIndicator.center.y)
@@ -275,6 +283,13 @@ public class ABVideoRangeSlider: UIView {
         }else{
             if position < positionLimit {
                 position = positionLimit
+            }
+        }
+        
+        let positionLimitMax = positionFromValue(value: self.startPercentage + valueFromSeconds(seconds: maxSpace))
+        if Float(self.duration) > self.maxSpace && self.maxSpace > 0{
+            if position > positionLimitMax{
+                position = positionLimitMax
             }
         }
         
