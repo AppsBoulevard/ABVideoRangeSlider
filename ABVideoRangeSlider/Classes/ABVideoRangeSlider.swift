@@ -22,6 +22,7 @@ public class ABVideoRangeSlider: UIView {
     var topLine             = ABBorder()
     var bottomLine          = ABBorder()
     var progressIndicator   = ABProgressIndicator()
+    var draggableView       = UIView()
     
     let thumbnailsManager   = ABThumbnailsManager()
     var duration: Float64   = 0.0
@@ -113,9 +114,17 @@ public class ABVideoRangeSlider: UIView {
                                                               y: -topBorderHeight,
                                                               width: 10,
                                                               height: self.frame.size.height + bottomBorderHeight + topBorderHeight))
-//        progressIndicator.isHidden = true
         progressIndicator.addGestureRecognizer(progressDrag)
         self.addSubview(progressIndicator)
+        
+        // Setup Draggable View
+        let viewDrag = UIPanGestureRecognizer(target:self,
+                                              action: #selector(viewDragged(recognizer:)))
+        
+        draggableView.addGestureRecognizer(viewDrag)
+        self.draggableView.backgroundColor = .clear
+        self.addSubview(draggableView)
+        self.sendSubview(toBack: draggableView)
     }
 
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -348,6 +357,108 @@ public class ABVideoRangeSlider: UIView {
         layoutSubviews()
     }
     
+    func viewDragged(recognizer: UIPanGestureRecognizer){
+        let translation = recognizer.translation(in: self)
+        
+        var progressPosition = positionFromValue(value: self.progressPercentage)
+        var startPosition = positionFromValue(value: self.startPercentage)
+        var endPosition = positionFromValue(value: self.endPercentage)
+        
+        startPosition = startPosition + translation.x
+        endPosition = endPosition + translation.x
+        progressPosition = progressPosition + translation.x
+        
+        if startPosition < 0 {
+            startPosition = 0
+            endPosition = endPosition - translation.x
+            progressPosition = progressPosition - translation.x
+        }
+        
+        if endPosition > self.frame.size.width{
+            endPosition = self.frame.size.width
+            startPosition = startPosition - translation.x
+            progressPosition = progressPosition - translation.x
+        }
+        
+        recognizer.setTranslation(CGPoint.zero, in: self)
+        
+        progressIndicator.center = CGPoint(x: progressPosition , y: progressIndicator.center.y)
+        startIndicator.center = CGPoint(x: startPosition , y: startIndicator.center.y)
+        endIndicator.center = CGPoint(x: endPosition , y: endIndicator.center.y)
+        
+        let startPercentage = startIndicator.center.x * 100 / self.frame.width
+        let endPercentage = endIndicator.center.x * 100 / self.frame.width
+        let progressPercentage = progressIndicator.center.x * 100 / self.frame.width
+        
+        let startSeconds = secondsFromValue(value: startPercentage)
+        let endSeconds = secondsFromValue(value: endPercentage)
+        
+        self.delegate?.didChangeValue(videoRangeSlider: self, startTime: startSeconds, endTime: endSeconds)
+
+        if self.progressPercentage != progressPercentage{
+            let progressSeconds = secondsFromValue(value: progressPercentage)
+            self.delegate? .indicatorDidChangePosition(videoRangeSlider: self, position: progressSeconds)
+        }
+
+        self.startPercentage = startPercentage
+        self.endPercentage = endPercentage
+        self.progressPercentage = progressPercentage
+//        var progressPosition = positionFromValue(value: self.progressPercentage)
+//        var position = positionFromValue(value: self.endPercentage)
+//        position = position + translation.x
+//        
+//        if position < 0{
+//            position = 0
+//        }
+//        
+//        if position > self.frame.size.width{
+//            position = self.frame.size.width
+//        }
+//        
+//        if progressPosition > position{
+//            progressPosition = position
+//        }
+//        
+//        let positionLimit = positionFromValue(value: valueFromSeconds(seconds: minSpace) + self.startPercentage)
+//        
+//        if Float(self.duration) < self.minSpace {
+//            position = self.frame.size.width
+//        }else{
+//            if position < positionLimit {
+//                position = positionLimit
+//            }
+//        }
+//        
+//        let positionLimitMax = positionFromValue(value: self.startPercentage + valueFromSeconds(seconds: maxSpace))
+//        if Float(self.duration) > self.maxSpace && self.maxSpace > 0{
+//            if position > positionLimitMax{
+//                position = positionLimitMax
+//            }
+//        }
+//        
+//        recognizer.setTranslation(CGPoint.zero, in: self)
+//        progressIndicator.center = CGPoint(x: progressPosition , y: progressIndicator.center.y)
+//        endIndicator.center = CGPoint(x: position , y: endIndicator.center.y)
+//        
+//        let percentage = endIndicator.center.x * 100 / self.frame.width
+//        let progressPercentage = progressIndicator.center.x * 100 / self.frame.width
+//        
+//        let startSeconds = secondsFromValue(value: startPercentage)
+//        let endSeconds = secondsFromValue(value: endPercentage)
+//        
+//        self.delegate?.didChangeValue(videoRangeSlider: self, startTime: startSeconds, endTime: endSeconds)
+//        
+//        if self.progressPercentage != progressPercentage{
+//            let progressSeconds = secondsFromValue(value: progressPercentage)
+//            self.delegate? .indicatorDidChangePosition(videoRangeSlider: self, position: progressSeconds)
+//        }
+//        
+//        self.endPercentage = percentage
+//        self.progressPercentage = progressPercentage
+        
+        layoutSubviews()
+    }
+    
     private func secondsFromValue(value: CGFloat) -> Float64{
         return duration * Float64((value / 100))
     }
@@ -368,6 +479,10 @@ public class ABVideoRangeSlider: UIView {
         startIndicator.center = CGPoint(x: startPosition, y: startIndicator.center.y)
         endIndicator.center = CGPoint(x: endPosition, y: endIndicator.center.y)
         progressIndicator.center = CGPoint(x: progressPosition, y: progressIndicator.center.y)
+        draggableView.frame = CGRect(x: startIndicator.frame.origin.x + startIndicator.frame.size.width,
+                                     y: 0,
+                                     width: endIndicator.frame.origin.x - startIndicator.frame.origin.x - endIndicator.frame.size.width,
+                                     height: self.frame.height)
 
         
         topLine.frame = CGRect(x: startIndicator.frame.origin.x + startIndicator.frame.width,
