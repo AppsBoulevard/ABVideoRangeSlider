@@ -62,6 +62,23 @@ class ViewController: UIViewController, ABVideoRangeSliderDelegate {
         let customProgressIndicator =  UIImage(named: "CustomProgress")
         videoRangeSlider.setProgressIndicatorImage(image: customProgressIndicator!)
 */
+
+        
+      
+        // Customize starTimeView
+        let customView = UIView(frame: CGRect(x: 0,
+                                              y: 0,
+                                              width: 60,
+                                              height: 40))
+        customView.backgroundColor = .black
+        customView.alpha = 0.5
+        customView.layer.borderColor = UIColor.black.cgColor
+        customView.layer.borderWidth = 1.0
+        customView.layer.cornerRadius = 8.0
+        videoRangeSlider.startTimeView.backgroundView = customView
+        videoRangeSlider.startTimeView.marginLeft = 2.0
+        videoRangeSlider.startTimeView.marginRight = 2.0
+        videoRangeSlider.startTimeView.timeLabel.textColor = .white
     }
     
     // MARK: ABVideoRangeSlider Delegate - Returns time in seconds

@@ -24,6 +24,9 @@ public class ABVideoRangeSlider: UIView {
     var progressIndicator   = ABProgressIndicator()
     var draggableView       = UIView()
     
+    public var startTimeView       = ABTimeView()
+    public var endTimeView         = ABTimeView()
+    
     let thumbnailsManager   = ABThumbnailsManager()
     var duration: Float64   = 0.0
     var videoURL            = URL(fileURLWithPath: "")
@@ -41,6 +44,11 @@ public class ABVideoRangeSlider: UIView {
     public var maxSpace: Float = 0              // In Seconds
     
     var isUpdatingThumbnails = false
+    
+    public enum ABTimeViewPosition{
+        case top
+        case bottom
+    }
     
     override public func awakeFromNib() {
         super.awakeFromNib()
@@ -118,6 +126,7 @@ public class ABVideoRangeSlider: UIView {
         self.addSubview(progressIndicator)
         
         // Setup Draggable View
+        
         let viewDrag = UIPanGestureRecognizer(target:self,
                                               action: #selector(viewDragged(recognizer:)))
         
@@ -125,6 +134,16 @@ public class ABVideoRangeSlider: UIView {
         self.draggableView.backgroundColor = .clear
         self.addSubview(draggableView)
         self.sendSubview(toBack: draggableView)
+        
+        // Setup time labels
+        
+        startTimeView = ABTimeView(size: CGSize(width: 60, height: 30), position: 1)
+        startTimeView.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        self.addSubview(startTimeView)
+        
+        endTimeView = ABTimeView(size: CGSize(width: 60, height: 30), position: 1)
+        endTimeView.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        self.addSubview(endTimeView)
     }
 
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -163,6 +182,22 @@ public class ABVideoRangeSlider: UIView {
     public func setBorderImage(image: UIImage){
         self.topLine.imageView.image = image
         self.bottomLine.imageView.image = image
+    }
+    
+    public func setTimeView(view: ABTimeView){
+        self.startTimeView = view
+        self.endTimeView = view
+    }
+    
+    public func setTimeViewPosition(position: ABTimeViewPosition){
+        switch position {
+        case .top:
+            
+            break
+        case .bottom:
+            
+            break
+        }
     }
     
     public func setVideoURL(videoURL: URL){
@@ -403,58 +438,6 @@ public class ABVideoRangeSlider: UIView {
         self.startPercentage = startPercentage
         self.endPercentage = endPercentage
         self.progressPercentage = progressPercentage
-//        var progressPosition = positionFromValue(value: self.progressPercentage)
-//        var position = positionFromValue(value: self.endPercentage)
-//        position = position + translation.x
-//        
-//        if position < 0{
-//            position = 0
-//        }
-//        
-//        if position > self.frame.size.width{
-//            position = self.frame.size.width
-//        }
-//        
-//        if progressPosition > position{
-//            progressPosition = position
-//        }
-//        
-//        let positionLimit = positionFromValue(value: valueFromSeconds(seconds: minSpace) + self.startPercentage)
-//        
-//        if Float(self.duration) < self.minSpace {
-//            position = self.frame.size.width
-//        }else{
-//            if position < positionLimit {
-//                position = positionLimit
-//            }
-//        }
-//        
-//        let positionLimitMax = positionFromValue(value: self.startPercentage + valueFromSeconds(seconds: maxSpace))
-//        if Float(self.duration) > self.maxSpace && self.maxSpace > 0{
-//            if position > positionLimitMax{
-//                position = positionLimitMax
-//            }
-//        }
-//        
-//        recognizer.setTranslation(CGPoint.zero, in: self)
-//        progressIndicator.center = CGPoint(x: progressPosition , y: progressIndicator.center.y)
-//        endIndicator.center = CGPoint(x: position , y: endIndicator.center.y)
-//        
-//        let percentage = endIndicator.center.x * 100 / self.frame.width
-//        let progressPercentage = progressIndicator.center.x * 100 / self.frame.width
-//        
-//        let startSeconds = secondsFromValue(value: startPercentage)
-//        let endSeconds = secondsFromValue(value: endPercentage)
-//        
-//        self.delegate?.didChangeValue(videoRangeSlider: self, startTime: startSeconds, endTime: endSeconds)
-//        
-//        if self.progressPercentage != progressPercentage{
-//            let progressSeconds = secondsFromValue(value: progressPercentage)
-//            self.delegate? .indicatorDidChangePosition(videoRangeSlider: self, position: progressSeconds)
-//        }
-//        
-//        self.endPercentage = percentage
-//        self.progressPercentage = progressPercentage
         
         layoutSubviews()
     }
@@ -472,6 +455,9 @@ public class ABVideoRangeSlider: UIView {
     override public func layoutSubviews() {
         super.layoutSubviews()
 
+        startTimeView.timeLabel.text = self.secondsToFormattedString(totalSeconds: secondsFromValue(value: self.startPercentage))
+        endTimeView.timeLabel.text = self.secondsToFormattedString(totalSeconds: secondsFromValue(value: self.endPercentage))
+        
         let startPosition = positionFromValue(value: self.startPercentage)
         let endPosition = positionFromValue(value: self.endPercentage)
         let progressPosition = positionFromValue(value: self.progressPercentage)
@@ -495,6 +481,9 @@ public class ABVideoRangeSlider: UIView {
                                   width: endIndicator.frame.origin.x - startIndicator.frame.origin.x - endIndicator.frame.size.width,
                                   height: bottomBorderHeight)
         
+        // Update time view
+        startTimeView.center = CGPoint(x: startIndicator.center.x, y: startTimeView.center.y)
+        endTimeView.center = CGPoint(x: endIndicator.center.x, y: endTimeView.center.y)
     }
 
     
@@ -507,5 +496,16 @@ public class ABVideoRangeSlider: UIView {
     }
     
 
+    private func secondsToFormattedString(totalSeconds: Float64) -> String{
+        let hours:Int = Int(totalSeconds.truncatingRemainder(dividingBy: 86400) / 3600)
+        let minutes:Int = Int(totalSeconds.truncatingRemainder(dividingBy: 3600) / 60)
+        let seconds:Int = Int(totalSeconds.truncatingRemainder(dividingBy: 60))
+        
+        if hours > 0 {
+            return String(format: "%i:%02i:%02i", hours, minutes, seconds)
+        } else {
+            return String(format: "%02i:%02i", minutes, seconds)
+        }
+    }
     
 }

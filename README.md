@@ -13,6 +13,8 @@ Customizable Video Range Slider for trimming videos written in Swift 3.
 
 ![Progress Indicator](https://raw.githubusercontent.com/AppsBoulevard/ABVideoRangeSlider/master/Screenshots/ProgressIndicator.png "Progress Indicator")
 
+![Custom Time Labels](https://raw.githubusercontent.com/AppsBoulevard/ABVideoRangeSlider/master/Screenshots/CustomTimeLabels.png "Custom Time Labels")
+
 ## Installation
 
 ABVideoRangeSlider is available through [CocoaPods](http://cocoapods.org). To install
@@ -71,6 +73,41 @@ If you want to update the position:
 
 ```Swift
     videoRangeSlider.updateProgressIndicator(seconds: elapsedTimeOfVideo)
+```
+
+## Custom Time Labels
+
+You can customize the time label's backgrounds providing a custom `UIView` to `videoRangeSlider.startTimeView.backgroundView`.
+
+Example
+```Swift
+  let customView = UIView(frame: CGRect(x: 0,
+                                        y: 0,
+                                        width: 60,
+                                        height: 40))
+  customView.backgroundColor = .black
+  customView.alpha = 0.5
+  customView.layer.borderColor = UIColor.black.cgColor
+  customView.layer.borderWidth = 1.0
+  customView.layer.cornerRadius = 8.0
+  videoRangeSlider.startTimeView.backgroundView = customView
+
+```
+
+Properties
+```Swift
+  // Shows the formatted time
+  timeLabel: UILabel
+
+  // UILabel's margins - Default = 5.0
+  marginTop: CGFloat     
+  marginBottom: CGFloat   
+  marginLeft: CGFloat      
+  marginRight: CGFloat   
+
+  // Background View
+  backgroundView : UIView
+
 ```
 
 ## Protocols
