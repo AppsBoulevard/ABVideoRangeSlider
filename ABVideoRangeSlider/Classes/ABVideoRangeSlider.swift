@@ -15,7 +15,7 @@ public protocol ABVideoRangeSliderDelegate: class {
 
 public class ABVideoRangeSlider: UIView {
 
-    private enum DragLocation {
+    private enum DragHandleChoice {
         case start
         case end
     }
@@ -238,33 +238,38 @@ public class ABVideoRangeSlider: UIView {
         layoutSubviews()
     }
 
-    // MARK: Private functions
-
+    // MARK: - Private functions
+    
+    // MARK: - Crop Handle Drag Functions
     @objc private func startDragged(recognizer: UIPanGestureRecognizer){
-        self.processDrag(recognizer: recognizer, drag: .start)
+        self.processHandleDrag(
+            recognizer: recognizer,
+            drag: .start,
+            currentPositionPercentage: self.startPercentage,
+            currentIndicator: self.startIndicator
+        )
     }
     
     @objc private func endDragged(recognizer: UIPanGestureRecognizer){
-        self.processDrag(recognizer: recognizer, drag: .end)
+        self.processHandleDrag(
+            recognizer: recognizer,
+            drag: .end,
+            currentPositionPercentage: self.endPercentage,
+            currentIndicator: self.endIndicator
+        )
     }
-    
-    private func positionFromValue(value: CGFloat) -> CGFloat{
-        let position = value * self.frame.size.width / 100
-        return position
-    }
-    
-    private func processDrag(recognizer: UIPanGestureRecognizer, drag: DragLocation){
+
+    private func processHandleDrag(
+        recognizer: UIPanGestureRecognizer,
+        drag: DragHandleChoice,
+        currentPositionPercentage: CGFloat,
+        currentIndicator: UIView
+        ) {
         let translation = recognizer.translation(in: self)
         
         var progressPosition = positionFromValue(value: self.progressPercentage)
         
-        var position: CGFloat = 0.0
-        
-        if drag == .start {
-            position = positionFromValue(value: self.startPercentage)
-        } else {
-            position = positionFromValue(value: self.endPercentage)
-        }
+        var position: CGFloat = positionFromValue(value: currentPositionPercentage) // self.startPercentage or self.endPercentage
         
         position = position + translation.x
         
@@ -284,77 +289,34 @@ public class ABVideoRangeSlider: UIView {
             }
         }
         
-        var positionLimit: CGFloat = 0
+        let positionLimit = getPositionLimit(with: drag)
         
-        if drag == .start {
-            positionLimit = positionFromValue(value: self.endPercentage - valueFromSeconds(seconds: minSpace))
-        } else {
-            positionLimit = positionFromValue(value: valueFromSeconds(seconds: minSpace) + self.startPercentage)
-        }
+        position = checkEdgeCasesForPosition(with: position, and: positionLimit, and: drag)
         
-        if drag == .start {
-            
-            if Float(self.duration) < self.minSpace {
-                position = 0
-            }else{
-                if position > positionLimit {
-                    position = positionLimit
-                }
-            }
-        } else {
-            
-            if Float(self.duration) < self.minSpace {
-                position = self.frame.size.width
-            }else{
-                if position < positionLimit {
-                    position = positionLimit
-                }
-            }
-        }
+        let positionLimitMax = getPositionLimitMax(with: drag)
         
-        var positionLimitMax: CGFloat
-        
-        if drag == .start {
-            positionLimitMax = positionFromValue(value: self.endPercentage - valueFromSeconds(seconds: maxSpace))
-        } else {
-            positionLimitMax = positionFromValue(value: self.startPercentage + valueFromSeconds(seconds: maxSpace))
-        }
-        
-        
-        if Float(self.duration) > self.maxSpace && self.maxSpace > 0{
+        if Float(self.duration) > self.maxSpace && self.maxSpace > 0 {
             if drag == .start {
-                if position < positionLimitMax{
+                if position < positionLimitMax {
                     position = positionLimitMax
                 }
             } else {
-                if position > positionLimitMax{
+                if position > positionLimitMax {
                     position = positionLimitMax
                 }
             }
         }
         
-        
         recognizer.setTranslation(CGPoint.zero, in: self)
         progressIndicator.center = CGPoint(x: progressPosition , y: progressIndicator.center.y)
+        currentIndicator.center = CGPoint(x: position , y: currentIndicator.center.y)
         
-        if drag == .start {
-            startIndicator.center = CGPoint(x: position , y: startIndicator.center.y)
-        } else {
-            endIndicator.center = CGPoint(x: position , y: endIndicator.center.y)
-        }
-        
-        var percentage: CGFloat = 0.0
-        
-        if drag == .start {
-            percentage = startIndicator.center.x * 100 / self.frame.width
-        } else {
-            percentage = endIndicator.center.x * 100 / self.frame.width
-        }
+        var percentage = currentIndicator.center.x * 100 / self.frame.width
         
         let progressPercentage = progressIndicator.center.x * 100 / self.frame.width
         
-        let startSeconds = secondsFromValue(value: startPercentage)
-        let endSeconds = secondsFromValue(value: endPercentage)
+        let startSeconds = secondsFromValue(value: self.startPercentage)
+        let endSeconds = secondsFromValue(value: self.endPercentage)
         
         self.delegate?.didChangeValue(videoRangeSlider: self, startTime: startSeconds, endTime: endSeconds)
         
@@ -373,8 +335,7 @@ public class ABVideoRangeSlider: UIView {
         
         layoutSubviews()
     }
-
-
+    
     func progressDragged(recognizer: UIPanGestureRecognizer){
         let translation = recognizer.translation(in: self)
 
@@ -456,7 +417,51 @@ public class ABVideoRangeSlider: UIView {
 
         layoutSubviews()
     }
-
+    
+    // MARK: - Drag Functions Helpers
+    private func positionFromValue(value: CGFloat) -> CGFloat{
+        let position = value * self.frame.size.width / 100
+        return position
+    }
+    
+    private func getPositionLimit(with drag: DragHandleChoice) -> CGFloat {
+        if drag == .start {
+            return positionFromValue(value: self.endPercentage - valueFromSeconds(seconds: self.minSpace))
+        } else {
+            return positionFromValue(value: valueFromSeconds(seconds: self.minSpace) + self.startPercentage)
+        }
+    }
+    
+    private func getPositionLimitMax(with drag: DragHandleChoice) -> CGFloat {
+        if drag == .start {
+            return positionFromValue(value: self.endPercentage - valueFromSeconds(seconds: self.maxSpace))
+        } else {
+            return positionFromValue(value: self.startPercentage + valueFromSeconds(seconds: self.maxSpace))
+        }
+    }
+    
+    private func checkEdgeCasesForPosition(with position: CGFloat, and positionLimit: CGFloat, and drag: DragHandleChoice) -> CGFloat {
+        if drag == .start {
+            if Float(self.duration) < self.minSpace {
+                return 0
+            } else {
+                if position > positionLimit {
+                    return positionLimit
+                }
+            }
+        } else {
+            if Float(self.duration) < self.minSpace {
+                return self.frame.size.width
+            } else {
+                if position < positionLimit {
+                    return positionLimit
+                }
+            }
+        }
+        
+        return position
+    }
+    
     private func secondsFromValue(value: CGFloat) -> Float64{
         return duration * Float64((value / 100))
     }
@@ -465,7 +470,7 @@ public class ABVideoRangeSlider: UIView {
         return CGFloat(seconds * 100) / CGFloat(duration)
     }
 
-    // MARK:
+    // MARK: -
 
     override public func layoutSubviews() {
         super.layoutSubviews()
