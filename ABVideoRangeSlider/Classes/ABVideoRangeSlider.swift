@@ -15,6 +15,11 @@ public protocol ABVideoRangeSliderDelegate: class {
 
 public class ABVideoRangeSlider: UIView {
 
+    private enum DragLocation {
+        case start
+        case end
+    }
+    
     public weak var delegate: ABVideoRangeSliderDelegate? = nil
 
     var startIndicator      = ABStartIndicator()
@@ -235,130 +240,140 @@ public class ABVideoRangeSlider: UIView {
 
     // MARK: Private functions
 
+    @objc private func startDragged(recognizer: UIPanGestureRecognizer){
+        self.processDrag(recognizer: recognizer, drag: .start)
+    }
+    
+    @objc private func endDragged(recognizer: UIPanGestureRecognizer){
+        self.processDrag(recognizer: recognizer, drag: .end)
+    }
+    
     private func positionFromValue(value: CGFloat) -> CGFloat{
         let position = value * self.frame.size.width / 100
         return position
     }
-
-    func startDragged(recognizer: UIPanGestureRecognizer){
+    
+    private func processDrag(recognizer: UIPanGestureRecognizer, drag: DragLocation){
         let translation = recognizer.translation(in: self)
-
+        
         var progressPosition = positionFromValue(value: self.progressPercentage)
-        var position = positionFromValue(value: self.startPercentage)
-        position = position + translation.x
-
-        if position < 0{
-            position = 0
+        
+        var position: CGFloat = 0.0
+        
+        if drag == .start {
+            position = positionFromValue(value: self.startPercentage)
+        } else {
+            position = positionFromValue(value: self.endPercentage)
         }
-
-        if position > self.frame.size.width{
+        
+        position = position + translation.x
+        
+        if position < 0 { position = 0 }
+        
+        if position > self.frame.size.width {
             position = self.frame.size.width
         }
-
-        if progressPosition < position{
-            progressPosition = position
-        }
-
-        let positionLimit = positionFromValue(value: self.endPercentage - valueFromSeconds(seconds: minSpace))
-
-        if Float(self.duration) < self.minSpace {
-            position = 0
-        }else{
-            if position > positionLimit {
-                position = positionLimit
+        
+        if drag == .start {
+            if progressPosition < position {
+                progressPosition = position
+            }
+        } else {
+            if progressPosition > position {
+                progressPosition = position
             }
         }
-
-        let positionLimitMax = positionFromValue(value: self.endPercentage - valueFromSeconds(seconds: maxSpace))
+        
+        var positionLimit: CGFloat = 0
+        
+        if drag == .start {
+            positionLimit = positionFromValue(value: self.endPercentage - valueFromSeconds(seconds: minSpace))
+        } else {
+            positionLimit = positionFromValue(value: valueFromSeconds(seconds: minSpace) + self.startPercentage)
+        }
+        
+        if drag == .start {
+            
+            if Float(self.duration) < self.minSpace {
+                position = 0
+            }else{
+                if position > positionLimit {
+                    position = positionLimit
+                }
+            }
+        } else {
+            
+            if Float(self.duration) < self.minSpace {
+                position = self.frame.size.width
+            }else{
+                if position < positionLimit {
+                    position = positionLimit
+                }
+            }
+        }
+        
+        var positionLimitMax: CGFloat
+        
+        if drag == .start {
+            positionLimitMax = positionFromValue(value: self.endPercentage - valueFromSeconds(seconds: maxSpace))
+        } else {
+            positionLimitMax = positionFromValue(value: self.startPercentage + valueFromSeconds(seconds: maxSpace))
+        }
+        
+        
         if Float(self.duration) > self.maxSpace && self.maxSpace > 0{
-            if position < positionLimitMax{
-                position = positionLimitMax
+            if drag == .start {
+                if position < positionLimitMax{
+                    position = positionLimitMax
+                }
+            } else {
+                if position > positionLimitMax{
+                    position = positionLimitMax
+                }
             }
         }
-
-
+        
+        
         recognizer.setTranslation(CGPoint.zero, in: self)
         progressIndicator.center = CGPoint(x: progressPosition , y: progressIndicator.center.y)
-        startIndicator.center = CGPoint(x: position , y: startIndicator.center.y)
-
-        let percentage = startIndicator.center.x * 100 / self.frame.width
+        
+        if drag == .start {
+            startIndicator.center = CGPoint(x: position , y: startIndicator.center.y)
+        } else {
+            endIndicator.center = CGPoint(x: position , y: endIndicator.center.y)
+        }
+        
+        var percentage: CGFloat = 0.0
+        
+        if drag == .start {
+            percentage = startIndicator.center.x * 100 / self.frame.width
+        } else {
+            percentage = endIndicator.center.x * 100 / self.frame.width
+        }
+        
         let progressPercentage = progressIndicator.center.x * 100 / self.frame.width
-
+        
         let startSeconds = secondsFromValue(value: startPercentage)
         let endSeconds = secondsFromValue(value: endPercentage)
-
+        
         self.delegate?.didChangeValue(videoRangeSlider: self, startTime: startSeconds, endTime: endSeconds)
-
-        if self.progressPercentage != progressPercentage{
+        
+        if self.progressPercentage != progressPercentage {
             let progressSeconds = secondsFromValue(value: progressPercentage)
             self.delegate?.indicatorDidChangePosition(videoRangeSlider: self, position: progressSeconds)
         }
-
-        self.startPercentage = percentage
+        
+        if drag == .start {
+            self.startPercentage = percentage
+        } else {
+            self.endPercentage = percentage
+        }
+        
         self.progressPercentage = progressPercentage
-
+        
         layoutSubviews()
     }
 
-
-    func endDragged(recognizer: UIPanGestureRecognizer){
-        let translation = recognizer.translation(in: self)
-
-        var progressPosition = positionFromValue(value: self.progressPercentage)
-        var position = positionFromValue(value: self.endPercentage)
-        position = position + translation.x
-
-        if position < 0{
-            position = 0
-        }
-
-        if position > self.frame.size.width{
-            position = self.frame.size.width
-        }
-
-        if progressPosition > position{
-            progressPosition = position
-        }
-
-        let positionLimit = positionFromValue(value: valueFromSeconds(seconds: minSpace) + self.startPercentage)
-
-        if Float(self.duration) < self.minSpace {
-            position = self.frame.size.width
-        }else{
-            if position < positionLimit {
-                position = positionLimit
-            }
-        }
-
-        let positionLimitMax = positionFromValue(value: self.startPercentage + valueFromSeconds(seconds: maxSpace))
-        if Float(self.duration) > self.maxSpace && self.maxSpace > 0{
-            if position > positionLimitMax{
-                position = positionLimitMax
-            }
-        }
-
-        recognizer.setTranslation(CGPoint.zero, in: self)
-        progressIndicator.center = CGPoint(x: progressPosition , y: progressIndicator.center.y)
-        endIndicator.center = CGPoint(x: position , y: endIndicator.center.y)
-
-        let percentage = endIndicator.center.x * 100 / self.frame.width
-        let progressPercentage = progressIndicator.center.x * 100 / self.frame.width
-
-        let startSeconds = secondsFromValue(value: startPercentage)
-        let endSeconds = secondsFromValue(value: endPercentage)
-
-        self.delegate?.didChangeValue(videoRangeSlider: self, startTime: startSeconds, endTime: endSeconds)
-
-        if self.progressPercentage != progressPercentage{
-            let progressSeconds = secondsFromValue(value: progressPercentage)
-            self.delegate? .indicatorDidChangePosition(videoRangeSlider: self, position: progressSeconds)
-        }
-
-        self.endPercentage = percentage
-        self.progressPercentage = progressPercentage
-
-        layoutSubviews()
-    }
 
     func progressDragged(recognizer: UIPanGestureRecognizer){
         let translation = recognizer.translation(in: self)
