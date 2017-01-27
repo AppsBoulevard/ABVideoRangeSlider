@@ -47,7 +47,9 @@ public class ABVideoRangeSlider: UIView {
 
     public var minSpace: Float = 1              // In Seconds
     public var maxSpace: Float = 0              // In Seconds
-
+    
+    public var isProgressIndicatorFollowingStartCropHandle: Bool = false
+    
     var isUpdatingThumbnails = false
 
     public enum ABTimeViewPosition{
@@ -280,7 +282,7 @@ public class ABVideoRangeSlider: UIView {
         }
         
         if drag == .start {
-            if progressPosition < position {
+            if progressPosition < position || isProgressIndicatorFollowingStartCropHandle {
                 progressPosition = position
             }
         } else {
