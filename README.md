@@ -74,6 +74,11 @@ If you want to update the position:
 ```Swift
     videoRangeSlider.updateProgressIndicator(seconds: elapsedTimeOfVideo)
 ```
+You can also have the progress indicator be "sticky" follow the start crop indicator when adjusted:
+
+```Swift
+    videoRangeSlider.isProgressIndicatorSticky = true
+```
 
 ## Custom Time Labels
 
