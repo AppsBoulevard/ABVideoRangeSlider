@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 @objc public protocol ABVideoRangeSliderDelegate: class {
     func didChangeValue(videoRangeSlider: ABVideoRangeSlider, startTime: Float64, endTime: Float64)
@@ -32,13 +33,34 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     var progressIndicator   = ABProgressIndicator()
     var draggableView       = UIView()
 
+    private let leftTrimmedView = UIView()
+    private let rightTrimmedView = UIView()
+    
     public var startTimeView       = ABTimeView()
     public var endTimeView         = ABTimeView()
+    
+    public var avasset: AVAsset! {
+        didSet {
+            self.superview?.layoutSubviews()
+            self.updateThumbnails()
+        }
+    }
 
+    public var videoURL: URL! {
+        didSet {
+            avasset = AVURLAsset(url: videoURL)
+        }
+    }
+
+    var duration: Float64 {
+        get {
+            guard let asset = self.avasset else { return 0 }
+            return CMTimeGetSeconds(asset.duration)
+        }
+    }
+    
     let thumbnailsManager   = ABThumbnailsManager()
-    var duration: Float64   = 0.0
-    var videoURL            = URL(fileURLWithPath: "")
-
+   
     var progressPercentage: CGFloat = 0         // Represented in percentage
     var startPercentage: CGFloat    = 0         // Represented in percentage
     var endPercentage: CGFloat      = 100       // Represented in percentage
@@ -54,7 +76,6 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     public var isProgressIndicatorSticky: Bool = false
     public var isProgressIndicatorDraggable: Bool = true
     
-    var isUpdatingThumbnails = false
     var isReceivingGesture: Bool = false
     
     public enum ABTimeViewPosition{
@@ -79,6 +100,12 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     private func setup(){
         self.isUserInteractionEnabled = true
 
+        leftTrimmedView.backgroundColor = UIColor.black.withAlphaComponent(0.70)
+        self.addSubview(leftTrimmedView)
+        
+        rightTrimmedView.backgroundColor = UIColor.black.withAlphaComponent(0.70)
+        self.addSubview(rightTrimmedView)
+        
         // Setup Start Indicator
         let startDrag = UIPanGestureRecognizer(target:self,
                                                action: #selector(startDragged(recognizer:)))
@@ -220,25 +247,9 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         }
     }
 
-    public func setVideoURL(videoURL: URL){
-        self.duration = ABVideoHelper.videoDuration(videoURL: videoURL)
-        self.videoURL = videoURL
-        self.superview?.layoutSubviews()
-        self.updateThumbnails()
-    }
-
     public func updateThumbnails(){
-        if !isUpdatingThumbnails{
-            self.isUpdatingThumbnails = true
-            let backgroundQueue = DispatchQueue(label: "com.app.queue",
-                                                qos: .background,
-                                                target: nil)
-            backgroundQueue.async {
-                self.thumbnailsManager.updateThumbnails(view: self,
-                                                        videoURL: self.videoURL,
-                                                        duration: self.duration)
-                self.isUpdatingThumbnails = false
-            }
+        DispatchQueue.global(qos: .background).async {
+            self.thumbnailsManager.generateThumbnails(self, for: self.avasset)
         }
     }
 
@@ -313,7 +324,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         
         currentIndicator.center = CGPoint(x: position , y: currentIndicator.center.y)
         
-        var percentage = currentIndicator.center.x * 100 / self.frame.width
+        let percentage = currentIndicator.center.x * 100 / self.frame.width
         
         let startSeconds = secondsFromValue(value: self.startPercentage)
         let endSeconds = secondsFromValue(value: self.endPercentage)
@@ -548,6 +559,12 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         // Update time view
         startTimeView.center = CGPoint(x: startIndicator.center.x, y: startTimeView.center.y)
         endTimeView.center = CGPoint(x: endIndicator.center.x, y: endTimeView.center.y)
+        
+        // Update trimmed area
+        leftTrimmedView.frame = CGRect(x: 0, y: 0, width: draggableView.frame.origin.x, height: frame.height)
+            
+        let x = draggableView.frame.origin.x + draggableView.frame.width
+        rightTrimmedView.frame = CGRect(x: x, y: 0, width: frame.width - x, height: frame.height)
     }
 
 
