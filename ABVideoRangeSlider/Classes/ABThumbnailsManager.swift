@@ -11,18 +11,19 @@ import AVFoundation
 
 class ABThumbnailsManager: NSObject {
     
-    var thumbnailViews = [UIImageView]()
-
-    private func addImagesToView(images: [UIImage], view: UIView){
-        
+    private var thumbnailViews = [UIImageView]()
+    private var imageGenerator: AVAssetImageGenerator!
+    private var isGeneratingThumbnails = false
+    
+    private func addImagesToView(_ images: [UIImage], view: UIView) {
         self.thumbnailViews.removeAll()
         var xPos: CGFloat = 0.0
         var width: CGFloat = 0.0
         for image in images{
             DispatchQueue.main.async {
-                if xPos + view.frame.size.height < view.frame.width{
+                if xPos + view.frame.size.height < view.frame.width {
                     width = view.frame.size.height
-                }else{
+                } else {
                     width = view.frame.size.width - xPos
                 }
                 
@@ -47,32 +48,75 @@ class ABThumbnailsManager: NSObject {
         }
     }
     
-    private func thumbnailCount(inView: UIView) -> Int{
+    private func thumbnailCount(_ inView: UIView) -> Int {
         let num = Double(inView.frame.size.width) / Double(inView.frame.size.height)
         return Int(ceil(num))
     }
     
-    func updateThumbnails(view: UIView, avasset: AVAsset) -> [UIImageView]{
+    private func timePointsForCount(_ avasset: AVAsset, count: Int) -> [CMTime]? {
+        let duration = CMTimeGetSeconds(avasset.duration)
         
-        for view in self.thumbnailViews{
+        if duration == 0 || count == 0 {
+            return nil
+        }
+        
+        var timePoints = [CMTime]()
+        let increment = duration / Double(count)
+        for frameNumber in 0..<count {
+            let seconds: Float64 = Float64(increment) * Float64(frameNumber)
+            let time = CMTimeMakeWithSeconds(seconds, 600)
+            timePoints.append(time)
+        }
+        
+        return timePoints
+    }
+    
+    func cancelThumbnailGeneration() {
+        guard let generator = self.imageGenerator, isGeneratingThumbnails else { return }
+        generator.cancelAllCGImageGeneration()
+        isGeneratingThumbnails = false
+    }
+    
+    func generateThumbnails(_ view: UIView, for avasset: AVAsset) {
+        
+        cancelThumbnailGeneration()
+        
+        for view in self.thumbnailViews {
             DispatchQueue.main.async {
                 view.removeFromSuperview()
             }
         }
+    
+        let imagesCount = self.thumbnailCount(view)
         
-        let duration = CMTimeGetSeconds(avasset.duration)
+        guard let timePoints  = self.timePointsForCount(avasset, count: imagesCount) else { return }
         
-        var thumbnails = [UIImage]()
-        var offset: Float64 = 0
-        let imagesCount = self.thumbnailCount(inView: view)
+        self.imageGenerator = AVAssetImageGenerator(asset: avasset)
+        self.imageGenerator.appliesPreferredTrackTransform = true
+        self.isGeneratingThumbnails = true
         
-        for i in 0..<imagesCount{
-            let thumbnail = ABVideoHelper.thumbnailFromVideo(avasset,
-                                                             time: CMTimeMake(Int64(offset), 1))
-            offset = Float64(i) * (duration / Float64(imagesCount))
-            thumbnails.append(thumbnail)
-        }
-        self.addImagesToView(images: thumbnails, view: view)
-        return self.thumbnailViews
+        var thumbnailImages = [UIImage]()
+        self.imageGenerator.generateCGImagesAsynchronouslyForTimePoints(timePoints, completionHandler: { (requestedTime: CMTime, cgImage: CGImage?, actualTime: CMTime, result: AVAssetImageGeneratorResult, error: Error?) in
+            guard let image = cgImage, error == nil else {
+                return
+            }
+            
+            thumbnailImages.append(UIImage(cgImage: image))
+            
+            if requestedTime == timePoints.last {
+                self.isGeneratingThumbnails = false
+                self.addImagesToView(thumbnailImages, view: view)
+            }
+        })
     }
 }
+
+public extension AVAssetImageGenerator {
+    public func generateCGImagesAsynchronouslyForTimePoints(_ timePoints: [CMTime], completionHandler: @escaping AVAssetImageGeneratorCompletionHandler) {
+        let times = timePoints.map {timePoint in
+            return NSValue(time: timePoint)
+        }
+        self.generateCGImagesAsynchronously(forTimes: times, completionHandler: completionHandler)
+    }
+}
+

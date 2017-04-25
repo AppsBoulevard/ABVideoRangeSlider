@@ -41,7 +41,6 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     
     public var avasset: AVAsset! {
         didSet {
-            self.duration =  CMTimeGetSeconds(avasset.duration)
             self.superview?.layoutSubviews()
             self.updateThumbnails()
         }
@@ -53,9 +52,15 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         }
     }
 
-    let thumbnailsManager   = ABThumbnailsManager()
-    var duration: Float64   = 0.0
+    var duration: Float64 {
+        get {
+            guard let asset = self.avasset else { return 0 }
+            return CMTimeGetSeconds(asset.duration)
+        }
+    }
     
+    let thumbnailsManager   = ABThumbnailsManager()
+   
     var progressPercentage: CGFloat = 0         // Represented in percentage
     var startPercentage: CGFloat    = 0         // Represented in percentage
     var endPercentage: CGFloat      = 100       // Represented in percentage
@@ -71,7 +76,6 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     public var isProgressIndicatorSticky: Bool = false
     public var isProgressIndicatorDraggable: Bool = true
     
-    var isUpdatingThumbnails = false
     var isReceivingGesture: Bool = false
     
     public enum ABTimeViewPosition{
@@ -244,16 +248,8 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     }
 
     public func updateThumbnails(){
-        if !isUpdatingThumbnails{
-            self.isUpdatingThumbnails = true
-            let backgroundQueue = DispatchQueue(label: "com.app.queue",
-                                                qos: .background,
-                                                target: nil)
-            backgroundQueue.async {
-                _ = self.thumbnailsManager.updateThumbnails(view: self,
-                                                            avasset: self.avasset)
-                self.isUpdatingThumbnails = false
-            }
+        DispatchQueue.global(qos: .background).async {
+            self.thumbnailsManager.generateThumbnails(self, for: self.avasset)
         }
     }
 
