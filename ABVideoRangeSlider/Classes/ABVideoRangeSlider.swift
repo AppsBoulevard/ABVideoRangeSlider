@@ -32,6 +32,9 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     var progressIndicator   = ABProgressIndicator()
     var draggableView       = UIView()
 
+    private let leftTrimmedView = UIView()
+    private let rightTrimmedView = UIView()
+    
     public var startTimeView       = ABTimeView()
     public var endTimeView         = ABTimeView()
 
@@ -79,6 +82,12 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     private func setup(){
         self.isUserInteractionEnabled = true
 
+        leftTrimmedView.backgroundColor = UIColor.black.withAlphaComponent(0.70)
+        self.addSubview(leftTrimmedView)
+        
+        rightTrimmedView.backgroundColor = UIColor.black.withAlphaComponent(0.70)
+        self.addSubview(rightTrimmedView)
+        
         // Setup Start Indicator
         let startDrag = UIPanGestureRecognizer(target:self,
                                                action: #selector(startDragged(recognizer:)))
@@ -548,6 +557,12 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         // Update time view
         startTimeView.center = CGPoint(x: startIndicator.center.x, y: startTimeView.center.y)
         endTimeView.center = CGPoint(x: endIndicator.center.x, y: endTimeView.center.y)
+        
+        // Update trimmed area
+        leftTrimmedView.frame = CGRect(x: 0, y: 0, width: draggableView.frame.origin.x, height: frame.height)
+            
+        let x = draggableView.frame.origin.x + draggableView.frame.width
+        rightTrimmedView.frame = CGRect(x: x, y: 0, width: frame.width - x, height: frame.height)
     }
 
 
