@@ -11,8 +11,7 @@ import AVFoundation
 
 class ABVideoHelper: NSObject {
 
-    static func thumbnailFromVideo(videoUrl: URL, time: CMTime) -> UIImage{
-        let asset: AVAsset = AVAsset(url: videoUrl) as AVAsset
+    static func thumbnailFromVideo(_ asset: AVAsset, time: CMTime) -> UIImage{
         let imgGenerator = AVAssetImageGenerator(asset: asset)
         imgGenerator.appliesPreferredTrackTransform = true
         do{

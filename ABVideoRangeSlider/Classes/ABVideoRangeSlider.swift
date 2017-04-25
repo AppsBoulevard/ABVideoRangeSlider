@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 @objc public protocol ABVideoRangeSliderDelegate: class {
     func didChangeValue(videoRangeSlider: ABVideoRangeSlider, startTime: Float64, endTime: Float64)
@@ -37,11 +38,24 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     
     public var startTimeView       = ABTimeView()
     public var endTimeView         = ABTimeView()
+    
+    public var avasset: AVAsset! {
+        didSet {
+            self.duration =  CMTimeGetSeconds(avasset.duration)
+            self.superview?.layoutSubviews()
+            self.updateThumbnails()
+        }
+    }
+
+    public var videoURL: URL! {
+        didSet {
+            avasset = AVURLAsset(url: videoURL)
+        }
+    }
 
     let thumbnailsManager   = ABThumbnailsManager()
     var duration: Float64   = 0.0
-    var videoURL            = URL(fileURLWithPath: "")
-
+    
     var progressPercentage: CGFloat = 0         // Represented in percentage
     var startPercentage: CGFloat    = 0         // Represented in percentage
     var endPercentage: CGFloat      = 100       // Represented in percentage
@@ -229,13 +243,6 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         }
     }
 
-    public func setVideoURL(videoURL: URL){
-        self.duration = ABVideoHelper.videoDuration(videoURL: videoURL)
-        self.videoURL = videoURL
-        self.superview?.layoutSubviews()
-        self.updateThumbnails()
-    }
-
     public func updateThumbnails(){
         if !isUpdatingThumbnails{
             self.isUpdatingThumbnails = true
@@ -244,8 +251,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
                                                 target: nil)
             backgroundQueue.async {
                 _ = self.thumbnailsManager.updateThumbnails(view: self,
-                                                        videoURL: self.videoURL,
-                                                        duration: self.duration)
+                                                            avasset: self.avasset)
                 self.isUpdatingThumbnails = false
             }
         }

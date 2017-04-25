@@ -52,7 +52,7 @@ class ABThumbnailsManager: NSObject {
         return Int(ceil(num))
     }
     
-    func updateThumbnails(view: UIView, videoURL: URL, duration: Float64) -> [UIImageView]{
+    func updateThumbnails(view: UIView, avasset: AVAsset) -> [UIImageView]{
         
         for view in self.thumbnailViews{
             DispatchQueue.main.async {
@@ -60,12 +60,14 @@ class ABThumbnailsManager: NSObject {
             }
         }
         
+        let duration = CMTimeGetSeconds(avasset.duration)
+        
         var thumbnails = [UIImage]()
         var offset: Float64 = 0
         let imagesCount = self.thumbnailCount(inView: view)
         
         for i in 0..<imagesCount{
-            let thumbnail = ABVideoHelper.thumbnailFromVideo(videoUrl: videoURL,
+            let thumbnail = ABVideoHelper.thumbnailFromVideo(avasset,
                                                              time: CMTimeMake(Int64(offset), 1))
             offset = Float64(i) * (duration / Float64(imagesCount))
             thumbnails.append(thumbnail)

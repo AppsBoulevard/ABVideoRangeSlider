@@ -35,7 +35,7 @@ class ViewController: UIViewController, ABVideoRangeSliderDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        videoRangeSlider.setVideoURL(videoURL: URL(fileURLWithPath: path!))
+        videoRangeSlider.videoURL =  URL(fileURLWithPath: path!)
         videoRangeSlider.delegate = self
         videoRangeSlider.minSpace = 60.0
 //        videoRangeSlider.maxSpace = 180.0
