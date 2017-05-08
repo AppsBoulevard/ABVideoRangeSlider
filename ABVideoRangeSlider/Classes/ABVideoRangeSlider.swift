@@ -11,7 +11,7 @@ import UIKit
 @objc public protocol ABVideoRangeSliderDelegate: class {
     func didChangeValue(videoRangeSlider: ABVideoRangeSlider, startTime: Float64, endTime: Float64)
     func indicatorDidChangePosition(videoRangeSlider: ABVideoRangeSlider, position: Float64)
-    
+
     @objc optional func sliderGesturesBegan()
     @objc optional func sliderGesturesEnded()
 }
@@ -22,7 +22,14 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         case start
         case end
     }
-    
+
+    public override var bounds: CGRect {
+        didSet {
+            self.setup()
+            self.updateThumbnails()
+        }
+    }
+
     public weak var delegate: ABVideoRangeSliderDelegate? = nil
 
     var startIndicator      = ABStartIndicator()
@@ -50,13 +57,13 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
 
     public var minSpace: Float = 1              // In Seconds
     public var maxSpace: Float = 0              // In Seconds
-    
+
     public var isProgressIndicatorSticky: Bool = false
     public var isProgressIndicatorDraggable: Bool = true
-    
+
     var isUpdatingThumbnails = false
     var isReceivingGesture: Bool = false
-    
+
     public enum ABTimeViewPosition{
         case top
         case bottom
@@ -122,11 +129,6 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
                                             height: bottomBorderHeight))
         self.addSubview(bottomLine)
 
-        self.addObserver(self,
-                         forKeyPath: "bounds",
-                         options: NSKeyValueObservingOptions(rawValue: 0),
-                         context: nil)
-
         // Setup Progress Indicator
 
         let progressDrag = UIPanGestureRecognizer(target:self,
@@ -187,7 +189,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     public func updateProgressIndicator(seconds: Float64){
         if !isReceivingGesture {
             let endSeconds = secondsFromValue(value: self.endPercentage)
-            
+
             if seconds >= endSeconds {
                 self.resetProgressPosition()
             } else {
@@ -272,7 +274,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
             currentIndicator: self.startIndicator
         )
     }
-    
+
     @objc private func endDragged(recognizer: UIPanGestureRecognizer){
         self.processHandleDrag(
             recognizer: recognizer,
@@ -288,17 +290,17 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         currentPositionPercentage: CGFloat,
         currentIndicator: UIView
         ) {
-        
+
         self.updateGestureStatus(recognizer: recognizer)
-        
+
         let translation = recognizer.translation(in: self)
-        
+
         var position: CGFloat = positionFromValue(value: currentPositionPercentage) // self.startPercentage or self.endPercentage
-        
+
         position = position + translation.x
-        
+
         if position < 0 { position = 0 }
-        
+
         if position > self.frame.size.width {
             position = self.frame.size.width
         }
@@ -317,29 +319,29 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
                 }
             }
         }
-        
+
         recognizer.setTranslation(CGPoint.zero, in: self)
-        
+
         currentIndicator.center = CGPoint(x: position , y: currentIndicator.center.y)
-        
+
         var percentage = currentIndicator.center.x * 100 / self.frame.width
-        
+
         let startSeconds = secondsFromValue(value: self.startPercentage)
         let endSeconds = secondsFromValue(value: self.endPercentage)
-        
+
         self.delegate?.didChangeValue(videoRangeSlider: self, startTime: startSeconds, endTime: endSeconds)
-        
+
         var progressPosition: CGFloat = 0.0
-        
+
         if drag == .start {
             self.startPercentage = percentage
         } else {
             self.endPercentage = percentage
         }
-        
+
         if drag == .start {
             progressPosition = positionFromValue(value: self.startPercentage)
-            
+
         } else {
             if recognizer.state != .ended {
                 progressPosition = positionFromValue(value: self.endPercentage)
@@ -347,27 +349,27 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
                 progressPosition = positionFromValue(value: self.startPercentage)
             }
         }
-        
+
         progressIndicator.center = CGPoint(x: progressPosition , y: progressIndicator.center.y)
         let progressPercentage = progressIndicator.center.x * 100 / self.frame.width
-        
+
         if self.progressPercentage != progressPercentage {
             let progressSeconds = secondsFromValue(value: progressPercentage)
             self.delegate?.indicatorDidChangePosition(videoRangeSlider: self, position: progressSeconds)
         }
-        
+
         self.progressPercentage = progressPercentage
-        
+
         layoutSubviews()
     }
-    
+
     func progressDragged(recognizer: UIPanGestureRecognizer){
         if !isProgressIndicatorDraggable {
             return
         }
-        
+
         updateGestureStatus(recognizer: recognizer)
-        
+
         let translation = recognizer.translation(in: self)
 
         let positionLimitStart  = positionFromValue(value: self.startPercentage)
@@ -401,7 +403,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
 
     func viewDragged(recognizer: UIPanGestureRecognizer){
         updateGestureStatus(recognizer: recognizer)
-        
+
         let translation = recognizer.translation(in: self)
 
         var progressPosition = positionFromValue(value: self.progressPercentage)
@@ -450,13 +452,13 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
 
         layoutSubviews()
     }
-    
+
     // MARK: - Drag Functions Helpers
     private func positionFromValue(value: CGFloat) -> CGFloat{
         let position = value * self.frame.size.width / 100
         return position
     }
-    
+
     private func getPositionLimits(with drag: DragHandleChoice) -> (min: CGFloat, max: CGFloat) {
         if drag == .start {
             return (
@@ -470,7 +472,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
             )
         }
     }
-    
+
     private func checkEdgeCasesForPosition(with position: CGFloat, and positionLimit: CGFloat, and drag: DragHandleChoice) -> CGFloat {
         if drag == .start {
             if Float(self.duration) < self.minSpace {
@@ -489,10 +491,10 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
                 }
             }
         }
-        
+
         return position
     }
-    
+
     private func secondsFromValue(value: CGFloat) -> Float64{
         return duration * Float64((value / 100))
     }
@@ -500,25 +502,25 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     private func valueFromSeconds(seconds: Float) -> CGFloat{
         return CGFloat(seconds * 100) / CGFloat(duration)
     }
-    
+
     private func updateGestureStatus(recognizer: UIGestureRecognizer) {
         if recognizer.state == .began {
-            
+
             self.isReceivingGesture = true
             self.delegate?.sliderGesturesBegan?()
-            
+
         } else if recognizer.state == .ended {
-            
+
             self.isReceivingGesture = false
             self.delegate?.sliderGesturesEnded?()
         }
     }
-    
+
     private func resetProgressPosition() {
         self.progressPercentage = self.startPercentage
         let progressPosition = positionFromValue(value: self.progressPercentage)
         progressIndicator.center = CGPoint(x: progressPosition , y: progressIndicator.center.y)
-        
+
         let startSeconds = secondsFromValue(value: self.progressPercentage)
         self.delegate?.indicatorDidChangePosition(videoRangeSlider: self, position: startSeconds)
     }
@@ -567,21 +569,17 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
                                     height: self.frame.size.height + topLine.frame.size.height + bottomLine.frame.size.height)
         return extendedBounds.contains(point)
     }
-
-
+    
+    
     private func secondsToFormattedString(totalSeconds: Float64) -> String{
         let hours:Int = Int(totalSeconds.truncatingRemainder(dividingBy: 86400) / 3600)
         let minutes:Int = Int(totalSeconds.truncatingRemainder(dividingBy: 3600) / 60)
         let seconds:Int = Int(totalSeconds.truncatingRemainder(dividingBy: 60))
-
+        
         if hours > 0 {
             return String(format: "%i:%02i:%02i", hours, minutes, seconds)
         } else {
             return String(format: "%02i:%02i", minutes, seconds)
         }
-    }
-
-    deinit {
-      removeObserver(self, forKeyPath: "bounds")
     }
 }
