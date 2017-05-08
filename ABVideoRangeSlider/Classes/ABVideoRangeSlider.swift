@@ -231,7 +231,9 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         self.duration = ABVideoHelper.videoDuration(videoURL: videoURL)
         self.videoURL = videoURL
         self.superview?.layoutSubviews()
-        self.updateThumbnails()
+        if self.bounds.height != 0 {
+            self.updateThumbnails()
+        }
     }
 
     public func updateThumbnails(){
