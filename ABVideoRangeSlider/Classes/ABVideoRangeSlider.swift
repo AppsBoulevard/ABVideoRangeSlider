@@ -30,6 +30,8 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         }
     }
 
+    public var hidesTimeViews = true
+
     public weak var delegate: ABVideoRangeSliderDelegate? = nil
 
     var startIndicator      = ABStartIndicator()
@@ -163,11 +165,13 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         startTimeView.removeFromSuperview()
         startTimeView = ABTimeView(size: CGSize(width: 60, height: 30), position: 1)
         startTimeView.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        startTimeView.isHidden = hidesTimeViews
         self.addSubview(startTimeView)
 
         endTimeView.removeFromSuperview()
         endTimeView = ABTimeView(size: CGSize(width: 60, height: 30), position: 1)
         endTimeView.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        endTimeView.isHidden = hidesTimeViews
         self.addSubview(endTimeView)
     }
 
