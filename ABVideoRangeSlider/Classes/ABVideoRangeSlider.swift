@@ -56,7 +56,13 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     let indicatorWidth: CGFloat = 20.0
 
     public var minSpace: Float = 1              // In Seconds
-    public var maxSpace: Float = 0              // In Seconds
+    public var maxSpace: Float = 0  {           // In Seconds
+        didSet {
+            let percentage = maxSpace/Float(self.duration) * 100
+            self.endPercentage = min(CGFloat(percentage), 100.0)
+            self.layoutIfNeeded()
+        }
+    }
 
     public var isProgressIndicatorSticky: Bool = false
     public var isProgressIndicatorDraggable: Bool = true
