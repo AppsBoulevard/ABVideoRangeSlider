@@ -83,6 +83,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         let startDrag = UIPanGestureRecognizer(target:self,
                                                action: #selector(startDragged(recognizer:)))
 
+        startIndicator.removeFromSuperview()
         startIndicator = ABStartIndicator(frame: CGRect(x: 0,
                                                         y: -topBorderHeight,
                                                         width: 20,
@@ -96,6 +97,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         let endDrag = UIPanGestureRecognizer(target:self,
                                              action: #selector(endDragged(recognizer:)))
 
+        endIndicator.removeFromSuperview()
         endIndicator = ABEndIndicator(frame: CGRect(x: 0,
                                                     y: -topBorderHeight,
                                                     width: indicatorWidth,
@@ -106,13 +108,14 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
 
 
         // Setup Top and bottom line
-
+        topLine.removeFromSuperview()
         topLine = ABBorder(frame: CGRect(x: 0,
                                          y: -topBorderHeight,
                                          width: indicatorWidth,
                                          height: topBorderHeight))
         self.addSubview(topLine)
 
+        bottomLine.removeFromSuperview()
         bottomLine = ABBorder(frame: CGRect(x: 0,
                                             y: self.frame.size.height,
                                             width: indicatorWidth,
@@ -129,6 +132,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         let progressDrag = UIPanGestureRecognizer(target:self,
                                                   action: #selector(progressDragged(recognizer:)))
 
+        progressIndicator.removeFromSuperview()
         progressIndicator = ABProgressIndicator(frame: CGRect(x: 0,
                                                               y: -topBorderHeight,
                                                               width: 10,
@@ -148,10 +152,12 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
 
         // Setup time labels
 
+        startTimeView.removeFromSuperview()
         startTimeView = ABTimeView(size: CGSize(width: 60, height: 30), position: 1)
         startTimeView.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         self.addSubview(startTimeView)
 
+        endTimeView.removeFromSuperview()
         endTimeView = ABTimeView(size: CGSize(width: 60, height: 30), position: 1)
         endTimeView.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         self.addSubview(endTimeView)
@@ -159,6 +165,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
 
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "bounds"{
+            self.setup()
             self.updateThumbnails()
         }
     }
