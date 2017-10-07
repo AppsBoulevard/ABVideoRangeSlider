@@ -47,8 +47,8 @@ class ABThumbnailsManager: NSObject {
         }
     }
     
-    private func thumbnailCount(inView: UIView) -> Int{
-        let num = Double(inView.frame.size.width) / Double(inView.frame.size.height)
+    private func thumbnailCount(inViewFrame: CGRect) -> Int{
+        let num = Double(inViewFrame.size.width) / Double(inViewFrame.size.height)
         return Int(ceil(num))
     }
     
@@ -62,15 +62,17 @@ class ABThumbnailsManager: NSObject {
         
         var thumbnails = [UIImage]()
         var offset: Float64 = 0
-        let imagesCount = self.thumbnailCount(inView: view)
-        
-        for i in 0..<imagesCount{
-            let thumbnail = ABVideoHelper.thumbnailFromVideo(videoUrl: videoURL,
-                                                             time: CMTimeMake(Int64(offset), 1))
-            offset = Float64(i) * (duration / Float64(imagesCount))
-            thumbnails.append(thumbnail)
+        DispatchQueue.main.async {
+            let imagesCount = self.thumbnailCount(inViewFrame: view.frame)
+            
+            for i in 0..<imagesCount{
+                let thumbnail = ABVideoHelper.thumbnailFromVideo(videoUrl: videoURL,
+                                                                 time: CMTimeMake(Int64(offset), 1))
+                offset = Float64(i) * (duration / Float64(imagesCount))
+                thumbnails.append(thumbnail)
+            }
+            self.addImagesToView(images: thumbnails, view: view)
         }
-        self.addImagesToView(images: thumbnails, view: view)
         return self.thumbnailViews
     }
 }

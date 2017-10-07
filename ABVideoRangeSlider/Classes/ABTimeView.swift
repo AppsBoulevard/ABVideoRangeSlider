@@ -62,8 +62,8 @@ open class ABTimeView: UIView {
         self.backgroundView.frame = self.bounds
         self.timeLabel.frame = CGRect(x: marginLeft,
                                       y: marginTop - self.timeLabel.bounds.height / 2,
-                                      width: self.frame.width.subtracting(marginRight + marginLeft),
-                                      height: self.frame.height.subtracting(marginBottom + marginTop))
+                                      width: marginRight - marginLeft,
+                                      height: marginBottom-marginTop)
     }
     
     required public init?(coder aDecoder: NSCoder) {
