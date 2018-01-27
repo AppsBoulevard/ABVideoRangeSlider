@@ -230,13 +230,9 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     public func updateThumbnails(){
         if !isUpdatingThumbnails{
             self.isUpdatingThumbnails = true
-            let backgroundQueue = DispatchQueue(label: "com.app.queue",
-                                                qos: .background,
-                                                target: nil)
+            let backgroundQueue = DispatchQueue(label: "com.app.queue", qos: .background, target: nil)
             backgroundQueue.async {
-                self.thumbnailsManager.updateThumbnails(view: self,
-                                                        videoURL: self.videoURL,
-                                                        duration: self.duration)
+                _ = self.thumbnailsManager.updateThumbnails(view: self, videoURL: self.videoURL, duration: self.duration)
                 self.isUpdatingThumbnails = false
             }
         }
@@ -313,7 +309,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         
         currentIndicator.center = CGPoint(x: position , y: currentIndicator.center.y)
         
-        var percentage = currentIndicator.center.x * 100 / self.frame.width
+		let percentage = currentIndicator.center.x * 100 / self.frame.width
         
         let startSeconds = secondsFromValue(value: self.startPercentage)
         let endSeconds = secondsFromValue(value: self.endPercentage)
@@ -352,7 +348,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         layoutSubviews()
     }
     
-    func progressDragged(recognizer: UIPanGestureRecognizer){
+	@objc func progressDragged(recognizer: UIPanGestureRecognizer){
         if !isProgressIndicatorDraggable {
             return
         }
@@ -390,7 +386,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         layoutSubviews()
     }
 
-    func viewDragged(recognizer: UIPanGestureRecognizer){
+	@objc func viewDragged(recognizer: UIPanGestureRecognizer){
         updateGestureStatus(recognizer: recognizer)
         
         let translation = recognizer.translation(in: self)
