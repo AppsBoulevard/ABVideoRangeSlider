@@ -569,6 +569,6 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     }
 
     deinit {
-      removeObserver(self, forKeyPath: "bounds")
+      // removeObserver(self, forKeyPath: "bounds")
     }
 }
