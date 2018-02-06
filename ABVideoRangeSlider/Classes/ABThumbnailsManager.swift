@@ -47,8 +47,14 @@ class ABThumbnailsManager: NSObject {
         }
     }
     
-    private func thumbnailCount(inView: UIView) -> Int{
-        let num = Double(inView.frame.size.width) / Double(inView.frame.size.height)
+    private func thumbnailCount(inView: UIView) -> Int {
+		
+		var num : Double = 0;
+		
+		DispatchQueue.main.async {
+        	num = Double(inView.frame.size.width) / Double(inView.frame.size.height)
+		}
+
         return Int(ceil(num))
     }
     
