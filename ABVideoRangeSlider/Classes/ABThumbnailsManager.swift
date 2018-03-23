@@ -47,21 +47,30 @@ class ABThumbnailsManager: NSObject {
         }
     }
     
-    private func thumbnailCount(inView: UIView) -> Int{
-        let num = Double(inView.frame.size.width) / Double(inView.frame.size.height)
+    private func thumbnailCount(inView: UIView) -> Int {
+		
+		var num : Double = 0;
+		
+		DispatchQueue.main.sync {
+        	num = Double(inView.frame.size.width) / Double(inView.frame.size.height)
+		}
+
         return Int(ceil(num))
     }
     
     func updateThumbnails(view: UIView, videoURL: URL, duration: Float64) -> [UIImageView]{
+
+        var thumbnails = [UIImage]()
+        var offset: Float64 = 0
+
         
         for view in self.thumbnailViews{
-            DispatchQueue.main.async {
+            DispatchQueue.main.sync
+            {
                 view.removeFromSuperview()
             }
         }
         
-        var thumbnails = [UIImage]()
-        var offset: Float64 = 0
         let imagesCount = self.thumbnailCount(inView: view)
         
         for i in 0..<imagesCount{
