@@ -484,7 +484,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     }
 
     private func valueFromSeconds(seconds: Float) -> CGFloat {
-        return CGFloat(seconds * 100) / CGFloat(duration)
+        return duration > 0 ? CGFloat(seconds * 100) / CGFloat(duration):0
     }
 
     private func updateGestureStatus(recognizer: UIGestureRecognizer) {
