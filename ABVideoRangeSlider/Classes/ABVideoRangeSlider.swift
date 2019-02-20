@@ -87,7 +87,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
                                                         y: -topBorderHeight,
                                                         width: 20,
                                                         height: self.frame.size.height + bottomBorderHeight + topBorderHeight))
-        startIndicator.layer.anchorPoint = CGPoint(x: 1, y: 0.5)
+        startIndicator.layer.anchorPoint = CGPoint(x: 0, y: 0.5)
         startIndicator.addGestureRecognizer(startDrag)
         self.addSubview(startIndicator)
 
@@ -100,7 +100,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
                                                     y: -topBorderHeight,
                                                     width: indicatorWidth,
                                                     height: self.frame.size.height + bottomBorderHeight + topBorderHeight))
-        endIndicator.layer.anchorPoint = CGPoint(x: 0, y: 0.5)
+        endIndicator.layer.anchorPoint = CGPoint(x: 1, y: 0.5)
         endIndicator.addGestureRecognizer(endDrag)
         self.addSubview(endIndicator)
 
@@ -159,7 +159,18 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "bounds"{
             self.updateThumbnails()
+            self.updateHandles()
         }
+    }
+    
+    private func updateHandles() {
+        var newStart = startIndicator.frame
+        newStart.size.height = bounds.height
+        startIndicator.frame = newStart
+        
+        var newEnd = endIndicator.frame
+        newEnd.size.height = bounds.height
+        endIndicator.frame = newEnd
     }
 
     // MARK: Public functions
@@ -553,14 +564,14 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
     }
 
     private func secondsToFormattedString(totalSeconds: Float64) -> String {
-        let hours: Int = Int(totalSeconds.truncatingRemainder(dividingBy: 86400) / 3600)
         let minutes: Int = Int(totalSeconds.truncatingRemainder(dividingBy: 3600) / 60)
         let seconds: Int = Int(totalSeconds.truncatingRemainder(dividingBy: 60))
+        let subseconds: Int = Int(totalSeconds.truncatingRemainder(dividingBy: 1)  * 10)
 
-        if hours > 0 {
-            return String(format: "%i:%02i:%02i", hours, minutes, seconds)
+        if minutes > 0 {
+            return String(format: "%i:%02i.%i", minutes, seconds, subseconds)
         } else {
-            return String(format: "%02i:%02i", minutes, seconds)
+            return String(format: "%i.%i", seconds, subseconds)
         }
     }
 
