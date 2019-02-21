@@ -9,19 +9,19 @@
 import UIKit
 
 class ABStartIndicator: UIView {
-    
+
     var imageView = UIImageView()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.isUserInteractionEnabled = true
-        
+
         let bundle = Bundle(for: ABStartIndicator.self)
         let image = UIImage(named: "StartIndicator", in: bundle, compatibleWith: nil)
-        
+
         imageView.frame = self.bounds
         imageView.image = image
-        imageView.contentMode = UIViewContentMode.scaleToFill
+        imageView.contentMode = .scaleToFill
         self.addSubview(imageView)
     }
 
