@@ -165,3 +165,6 @@ videoRangeSlider.updateThumbnails()
 ## License
 
 ABVideoRangeSlider is available under the MIT license. See the LICENSE file for more info.
+
+
+Updated by [Asim Khan](https://github.com/dev-shanghai)
