@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ABVideoRangeSlider'
-  s.version          = '0.1.5'
+  s.version          = '0.1.6'
   s.summary          = 'A simple range slider for trimming videos written in Swift 3. Includes a Progress Indicator.'
 
 # This description is used to generate tags and improve search results.
