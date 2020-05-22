@@ -21,7 +21,7 @@ class ABStartIndicator: UIView {
         
         imageView.frame = self.bounds
         imageView.image = image
-        imageView.contentMode = UIViewContentMode.scaleToFill
+        imageView.contentMode = .scaleToFill
         self.addSubview(imageView)
     }
 

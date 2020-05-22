@@ -19,7 +19,7 @@ class ABProgressIndicator: UIView {
         let image = UIImage(named: "ProgressIndicator", in: bundle, compatibleWith: nil)
         imageView.frame = self.bounds
         imageView.image = image
-        imageView.contentMode = UIViewContentMode.scaleToFill
+        imageView.contentMode = .scaleToFill
         self.addSubview(imageView)
     }
     
