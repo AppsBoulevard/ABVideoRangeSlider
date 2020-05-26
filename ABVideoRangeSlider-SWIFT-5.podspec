@@ -19,11 +19,11 @@ Pod::Spec.new do |s|
 
   s.description      = 'Display thumbnails and a slider for trimming videos in iOS. Includes a Progress Indicator'
 
-  s.homepage         = 'https://github.com/dev-shanghai/ABVideoRangeSlider-SWIFT-5.git'
+  s.homepage         = 'https://github.com/dev-shanghai/ABVideoRangeSlider.git'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Asim Khan' => 'iamasimkhanjadoon@gmail.com' }
-  s.source           = { :git => 'https://github.com/dev-shanghai/ABVideoRangeSlider-SWIFT-5.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/dev-shanghai/ABVideoRangeSlider.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/i_am_asimkhan'
 
   s.ios.deployment_target = '8.0'
