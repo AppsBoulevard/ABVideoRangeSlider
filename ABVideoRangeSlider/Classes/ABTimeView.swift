@@ -24,7 +24,7 @@ open class ABTimeView: UIView {
                                 height: backgroundView.frame.height)
             
             self.addSubview(backgroundView)
-            self.sendSubview(toBack: backgroundView)
+            self.sendSubviewToBack(backgroundView)
         }
     }
     

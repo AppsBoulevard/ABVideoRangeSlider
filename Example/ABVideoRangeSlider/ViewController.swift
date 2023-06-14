@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import ABVideoRangeSlider
+import ABVideoRangeSlider_SWIFT_5
 import AVKit
 import AVFoundation
 

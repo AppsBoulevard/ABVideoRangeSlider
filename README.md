@@ -21,7 +21,7 @@ ABVideoRangeSlider is available through [CocoaPods](http://cocoapods.org). To in
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "ABVideoRangeSlider"
+pod "ABVideoRangeSlider-SWIFT-5"
 ```
 
 ## Example
@@ -158,10 +158,11 @@ videoRangeSlider.updateThumbnails()
 ## Author
 [Apps Boulevard](http://www.appsboulevard.com)
 
-* Twitter: [@AppsBoulevard](twitter.com/AppsBoulevard)
-* Facebook: [facebook.com/AppsBoulevard](facebook.com/AppsBoulevard)
-* Email: hello@appsboulevard.com
+* Twitter: [@Asim](twitter.com/i_am_asimkhan)
 
 ## License
 
 ABVideoRangeSlider is available under the MIT license. See the LICENSE file for more info.
+
+
+Updated by [Asim Khan](https://github.com/iamasimkhan)

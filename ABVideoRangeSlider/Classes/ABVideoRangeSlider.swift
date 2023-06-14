@@ -144,7 +144,7 @@ public class ABVideoRangeSlider: UIView, UIGestureRecognizerDelegate {
         draggableView.addGestureRecognizer(viewDrag)
         self.draggableView.backgroundColor = .clear
         self.addSubview(draggableView)
-        self.sendSubview(toBack: draggableView)
+        self.sendSubviewToBack(draggableView)
 
         // Setup time labels
 

@@ -1,7 +1,7 @@
 use_frameworks!
 
 target 'ABVideoRangeSlider_Example' do
-  pod 'ABVideoRangeSlider', :path => '../'
+  pod 'ABVideoRangeSlider-SWIFT-5', :path => '../'
 
   target 'ABVideoRangeSlider_Tests' do
     inherit! :search_paths

@@ -1,6 +1,6 @@
 import UIKit
 import XCTest
-import ABVideoRangeSlider
+import ABVideoRangeSlider_SWIFT_5
 
 class Tests: XCTestCase {
     
